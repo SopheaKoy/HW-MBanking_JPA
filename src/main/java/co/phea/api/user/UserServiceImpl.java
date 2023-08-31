@@ -7,6 +7,7 @@ import co.phea.api.user.web.CreateUserDto;
 import co.phea.api.user.web.UpdateUserDto;
 import co.phea.api.user.web.UserDto;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -132,33 +133,33 @@ public class UserServiceImpl implements UserService{
         return userMapStruct.dtoToUser(updateUser);
     }
 
-//    @Override
-//    public User findAllAccountByUserUuid(String uuid , List<Account> accountList) {
-//
-//        boolean isExist = userRepository.existsByUuid(uuid);
-//
-//        if (isExist){
-//
-//            User user = userRepository.findByUuid(uuid).orElseThrow(
-//                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND ,
-//                            String.format("User UUID : %s is not found. " + uuid)
-//            ));
-//
-//        }
-//
-//        return null;
-//    }
 
     @Override
-    public List<Account> findAccountByUuid(String uuid) {
+    public List<Account> findAccountByUserUuid(String uuid) {
 
-       List<UserAccount> userAccounts = userAccountRepository.findByUuid(uuid);
-       List<Account> accounts = userAccounts.stream().map(
-               UserAccount::getAccount)
+       List<UserAccount> userAccounts = userAccountRepository.findByUserUuid(uuid);
+       List<Account> accounts = userAccounts.stream()
+               .map(UserAccount::getAccount)
                .collect(Collectors.toList());
 
         return accounts;
     }
+
+    @Override
+    public Account findAccountByUuidOfUser(String userUuid, String accountUuid) {
+
+        // Find the user based on userUuid
+        User user = userRepository.findByUuid(userUuid).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        String.format("User UUID: %s is not found.", userUuid))
+        );
+
+        return userAccountRepository.findByUser_UuidAndAccount_Uuid(userUuid, accountUuid)
+                .map(UserAccount::getAccount)
+                .orElseThrow();
+
+    }
+
 
 
 }

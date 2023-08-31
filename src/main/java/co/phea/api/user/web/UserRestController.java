@@ -1,6 +1,7 @@
 package co.phea.api.user.web;
 
 import co.phea.api.account.Account;
+import co.phea.api.account.AccountRepository;
 import co.phea.api.user.User;
 import co.phea.api.user.UserMapStruct;
 import co.phea.api.user.UserRepository;
@@ -8,6 +9,9 @@ import co.phea.api.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +24,7 @@ public class UserRestController {
     private final UserRepository userRepository;
     private final UserService userService;
     private final UserMapStruct userMapStruct;
+    private final AccountRepository accountRepository;
 
     @GetMapping
     public CollectionModel<?> findUser(){
@@ -65,6 +70,16 @@ public class UserRestController {
     @GetMapping("/{uuid}/accounts")
     public List<Account> findAllAccountByUserUuid(@PathVariable String uuid){
 
-        return userService.findAccountByUuid(uuid);
+        return userService.findAccountByUserUuid(uuid);
     }
+
+    @GetMapping("/{userUuid}/accounts/{accountUuid}")
+    public ResponseEntity<Account> findAllAccountByUserUuid(@PathVariable String userUuid , @PathVariable String accountUuid){
+
+        Account account =userService.findAccountByUuidOfUser(userUuid, accountUuid);
+
+        return new ResponseEntity<>(account , HttpStatus.OK);
+    }
+
+
 }

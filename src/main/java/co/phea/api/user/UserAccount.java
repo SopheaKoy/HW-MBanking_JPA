@@ -1,6 +1,7 @@
 package co.phea.api.user;
 
 import co.phea.api.account.Account;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -20,8 +21,6 @@ public class UserAccount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
-    private String uuid;
 
     @CreationTimestamp
     @Column(name = "create_at")
@@ -34,10 +33,12 @@ public class UserAccount {
     @Column(name = "is_disable")
     private boolean isDisables;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
+    @JsonIgnore
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
+    @JsonIgnore
     private Account account;
 
 }

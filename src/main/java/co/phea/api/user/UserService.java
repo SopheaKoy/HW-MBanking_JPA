@@ -25,7 +25,11 @@ public interface UserService {
 
     UserDto updateAndExistByUuid(String uuid , UpdateUserDto updateUserDto);
 
-    //User findAllAccountByUserUuid(String uuid, List<Account> accountList);
+    List<Account> findAccountByUserUuid(String uuid);
 
-    List<Account> findAccountByUuid(String uuid);
+
+    Account  findAccountByUuidOfUser(String userUuid, String accountUuid);
+
+
+
 }
