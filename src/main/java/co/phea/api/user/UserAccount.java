@@ -2,15 +2,10 @@ package co.phea.api.user;
 
 import co.phea.api.account.Account;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Setter
 @Getter
@@ -18,10 +13,15 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name = "users_accounts")
 @Entity
+@Builder
 public class UserAccount {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(unique = true)
+    private String uuid;
 
     @CreationTimestamp
     @Column(name = "create_at")
@@ -34,10 +34,10 @@ public class UserAccount {
     @Column(name = "is_disable")
     private boolean isDisables;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Account account;
 
 }

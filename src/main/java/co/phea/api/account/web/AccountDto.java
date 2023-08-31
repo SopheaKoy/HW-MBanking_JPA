@@ -3,7 +3,7 @@ package co.phea.api.account.web;
 import co.phea.api.accounttype.AccountType;
 import java.math.BigDecimal;
 
-public record AccountDto( String uuid,
+public record AccountDto(String uuid,
 
          String actName,
 
@@ -11,7 +11,5 @@ public record AccountDto( String uuid,
 
          boolean isDeleted,
 
-         BigDecimal transferLimit,
-
-         AccountType accountType) {
+         BigDecimal transferLimit) {
 }

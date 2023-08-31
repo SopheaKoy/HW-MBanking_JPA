@@ -1,5 +1,6 @@
 package co.phea.api.user.web;
 
+import co.phea.api.account.Account;
 import co.phea.api.user.User;
 import co.phea.api.user.UserMapStruct;
 import co.phea.api.user.UserRepository;
@@ -23,7 +24,7 @@ public class UserRestController {
     @GetMapping
     public CollectionModel<?> findUser(){
 
-        List<User> user = userRepository.findAll();
+        List<User> user = userRepository.findByIsDeletedFalse();
 
         return CollectionModel.of(userMapStruct.dtoToUserList(user));
     }
@@ -52,5 +53,18 @@ public class UserRestController {
     public void deleteUserByUuid(@PathVariable String uuid){
 
          userService.deleteByUuid(uuid);
+    }
+
+    @PutMapping("/{uuid}/disable")
+    public void disableByUuid(@PathVariable String uuid){
+
+        userService.disableByUuid(uuid);
+
+    }
+
+    @GetMapping("/{uuid}/accounts")
+    public List<Account> findAllAccountByUserUuid(@PathVariable String uuid){
+
+        return userService.findAccountByUuid(uuid);
     }
 }

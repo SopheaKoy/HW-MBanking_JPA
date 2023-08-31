@@ -1,5 +1,7 @@
 package co.phea.api.user;
 
+import co.phea.api.account.Account;
+import co.phea.api.account.AccountRepository;
 import co.phea.api.auth.Role;
 import co.phea.api.user.web.CreateUserDto;
 import co.phea.api.user.web.UpdateUserDto;
@@ -13,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +25,8 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final UserMapStruct userMapStruct;
     private final UserRoleRepository userRoleRepository;
+    private final AccountRepository accountRepository;
+    private final UserAccountRepository userAccountRepository;
 
 
     @Override
@@ -44,10 +49,33 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserDto deleteByUuid(String uuid) {
+    public void deleteByUuid(String uuid) {
 
+        if(userRepository.existsByUuid(uuid)){
 
-        return null;
+            userRepository.deleteByUuid(uuid);
+            return;
+        }
+
+        throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND ,
+                String.format("User UUID : %s is not found. " + uuid));
+
+    }
+
+    @Override
+    public void disableByUuid(String uuid) {
+
+        if(userRepository.existsByUuid(uuid)) {
+
+            userRepository.updateIsDeleteByUuid(true , uuid);
+
+            return;
+        }
+
+        throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND ,
+                String.format("User UUID is not found. " + uuid));
 
     }
 
@@ -102,6 +130,34 @@ public class UserServiceImpl implements UserService{
         updateUser = userRepository.save(updateUser);
 
         return userMapStruct.dtoToUser(updateUser);
+    }
+
+//    @Override
+//    public User findAllAccountByUserUuid(String uuid , List<Account> accountList) {
+//
+//        boolean isExist = userRepository.existsByUuid(uuid);
+//
+//        if (isExist){
+//
+//            User user = userRepository.findByUuid(uuid).orElseThrow(
+//                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND ,
+//                            String.format("User UUID : %s is not found. " + uuid)
+//            ));
+//
+//        }
+//
+//        return null;
+//    }
+
+    @Override
+    public List<Account> findAccountByUuid(String uuid) {
+
+       List<UserAccount> userAccounts = userAccountRepository.findByUuid(uuid);
+       List<Account> accounts = userAccounts.stream().map(
+               UserAccount::getAccount)
+               .collect(Collectors.toList());
+
+        return accounts;
     }
 
 

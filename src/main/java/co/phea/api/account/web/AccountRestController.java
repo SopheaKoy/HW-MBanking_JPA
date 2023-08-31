@@ -1,10 +1,9 @@
 package co.phea.api.account.web;
 
-import co.phea.api.account.Account;
+import co.phea.api.account.AccountMapStruct;
 import co.phea.api.account.AccountRepository;
 import co.phea.api.account.AccountService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.repository.query.Param;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +15,7 @@ public class AccountRestController {
 
     private final AccountService accountService;
     private final AccountRepository accountRepository;
+    private final AccountMapStruct accountMapStruct;
 
     @GetMapping
     public CollectionModel<?> findAccount(){
@@ -33,7 +33,32 @@ public class AccountRestController {
 
     }
 
+    @PostMapping
+    public void createNewAccount(@RequestBody CreateAccountDto createAccountDto){
 
+        accountService.createNewAccount(createAccountDto);
+
+    }
+
+    @PostMapping ("/{uuid}/rename")
+    public void renameAccountByUuid(@PathVariable String uuid , @RequestBody RenameAccountDto renameAccountDto){
+
+        accountService.renameAndExistByUuid(uuid, renameAccountDto);
+
+    }
+
+    @PostMapping ("/{uuid}/transfer-limit")
+    public void changeTransferLimit(@PathVariable String uuid , @RequestBody ChangeTransferAccountDto changeTransferAccountDto){
+
+        accountService.changeTransferLimit(uuid, changeTransferAccountDto);
+
+    }
+
+
+    @PutMapping("/{uuid}/closed")
+    public void disableAccountByUuid(@PathVariable String uuid, @RequestBody IsDeletedDto isDeletedDto){
+        accountService.disableAccountByUuid(uuid, isDeletedDto);
+    }
 
 
 

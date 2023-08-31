@@ -1,10 +1,9 @@
 package co.phea.api.user;
 
-
-import co.phea.api.account.Account;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Setter
@@ -34,6 +33,8 @@ public class User {
     private String email;
 
     private String password;
+
+    private BigDecimal balance;
 
     @Column(name= "student_card_no")
     private String studentCardNo;
